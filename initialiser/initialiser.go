@@ -16,10 +16,6 @@ type Initialiser struct {
 	quietMode    bool
 }
 
-func (i *Initialiser) Log() {
-	fmt.Println(i)
-}
-
 // Returns a new Initialiser struct.
 func New() Initialiser {
 	return Initialiser{}
@@ -101,7 +97,7 @@ func (i *Initialiser) validateYamlFile() error {
 
 	fType := filepath.Ext(i.yamlFilepath)
 	if fType == "" || (fType != ".yaml" && fType != ".yml") {
-		return fmt.Errorf("invalid filepath. Must be either *.yaml or *.yml")
+		return fmt.Errorf("invalid filepath '%s'. Must be either *.yaml or *.yml", i.yamlFilepath)
 	}
 
 	_, err = os.Stat(i.yamlFilepath)

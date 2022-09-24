@@ -1,6 +1,7 @@
 package initialiser
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"testing"
@@ -85,6 +86,50 @@ func TestValidateYamlFileValidLocal(t *testing.T) {
 		if err != nil {
 			t.Fatalf("validateYamlFile() returned unexpected error for valid filepath %s: %v.", initer.yamlFilepath, err)
 		}
+	}
+}
+
+func TestValidateYamlFileBlank(t *testing.T) {
+	initer := New()
+	initer.yamlFilepath = ""
+	err := initer.validateYamlFile()
+
+	expectedErr := "blank filepath value"
+	if err.Error() != expectedErr {
+		t.Fatalf("validateYamlFile() returned unexpected error for blank yaml filepath. Got %s. Expected %s", err.Error(), expectedErr)
+	}
+}
+
+func TestValidateYamlFileFlagValue(t *testing.T) {
+	initer := New()
+	initer.yamlFilepath = "-t"
+	err := initer.validateYamlFile()
+
+	expectedErr := "missing filepath value"
+	if err.Error() != expectedErr {
+		t.Fatalf("validateYamlFile() returned unexpected error for flag yaml filepath value. Got %s. Expected %s", err.Error(), expectedErr)
+	}
+}
+
+func TestValidateYamlFileWrongExtension(t *testing.T) {
+	initer := New()
+	initer.yamlFilepath = "wibble.js"
+	err := initer.validateYamlFile()
+
+	expectedErr := "invalid filepath 'wibble.js'. Must be either *.yaml or *.yml"
+	if err.Error() != expectedErr {
+		t.Fatalf("validateYamlFile() returned unexpected error for non-yaml filepath value. Got %s. Expected %s", err.Error(), expectedErr)
+	}
+}
+
+func TestValidateYamlFileNoFile(t *testing.T) {
+	initer := New()
+	initer.yamlFilepath = "missing.yaml"
+	err := initer.validateYamlFile()
+
+	expectedErr := fmt.Sprintf("stat %s: no such file or directory", initer.yamlFilepath)
+	if err.Error() != expectedErr {
+		t.Fatalf("validateYamlFile() returned unexpected error for missing file. Got %s. Expected %s", err.Error(), expectedErr)
 	}
 }
 

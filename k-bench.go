@@ -13,6 +13,4 @@ func main() {
 	if err != nil {
 		logrus.WithField("error", err).Fatal("failed to initialise correctly")
 	}
-
-	initer.Log()
 }
