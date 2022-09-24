@@ -1,9 +1,10 @@
 package main
 
 import (
+	"k-bench/configHandler"
 	"k-bench/initialiser"
 
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 func main() {
@@ -11,6 +12,13 @@ func main() {
 	initer.SetFromArgs()
 	err := initer.Initialise()
 	if err != nil {
-		logrus.WithField("error", err).Fatal("failed to initialise correctly")
+		log.WithField("error", err).Fatal("failed to initialise correctly")
 	}
+
+	config, err := configHandler.Get(initer.GetYamlFilepath())
+	if err != nil {
+		log.WithField("error", err).Fatal("failed to read config file")
+	}
+
+	log.Print(config)
 }
