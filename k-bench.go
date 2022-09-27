@@ -21,5 +21,6 @@ func main() {
 		log.WithField("error", err).Fatal("failed to read config file")
 	}
 	log.Info("parsed config file")
+
 	log.Print(config)
 }

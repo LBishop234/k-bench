@@ -28,3 +28,8 @@ func Get(filepath string) (conf Config, err error) {
 
 	return conf, nil
 }
+
+// Returnst the Config's K8s Client
+func (c *Config) GetK8sClient() *kubernetes.Clientset {
+	return c.k8sClient
+}
