@@ -1,4 +1,4 @@
-package configHandler
+package configFile
 
 import (
 	errHandler "k-bench/errHandler"
@@ -20,7 +20,7 @@ type connStruct struct {
 }
 
 // Creates a k8s client set from the kubeconfig filepath.
-func (c *connStruct) getClientSet() (clientSet *kubernetes.Clientset, err error) {
+func (c *connStruct) GetClientSet() (clientSet *kubernetes.Clientset, err error) {
 	config, err := clientcmd.BuildConfigFromFlags("", c.Kubeconfig)
 	if err != nil {
 		return nil, errHandler.Error("error creating k8s config from kubeconfig", err)

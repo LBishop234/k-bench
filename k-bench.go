@@ -14,11 +14,12 @@ func main() {
 	if err != nil {
 		log.WithField("error", err).Fatal("failed to initialise correctly")
 	}
+	log.Info("initialised k-bench")
 
 	config, err := configHandler.Get(initer.GetYamlFilepath())
 	if err != nil {
 		log.WithField("error", err).Fatal("failed to read config file")
 	}
-
+	log.Info("parsed config file")
 	log.Print(config)
 }
