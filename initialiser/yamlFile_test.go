@@ -1,7 +1,6 @@
 package initialiser
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"testing"
@@ -14,7 +13,7 @@ func TestGetYamlFilepath(t *testing.T) {
 
 	gotFilepath := initer.GetYamlFilepath()
 	if gotFilepath != expectedFilepath {
-		t.Fatalf("GetYamlFilepath returned unexpected value. Got %s. Expected %s.", gotFilepath, expectedFilepath)
+		t.Fatalf("GetYamlFilepath returned unexpected value. Got '%s'. Expected '%s'.", gotFilepath, expectedFilepath)
 	}
 }
 
@@ -94,9 +93,9 @@ func TestValidateYamlFileBlank(t *testing.T) {
 	initer.yamlFilepath = ""
 	err := initer.validateYamlFile()
 
-	expectedErr := "blank filepath value"
+	expectedErr := "initialiser got invalid yaml file | blank yaml filepath value"
 	if err.Error() != expectedErr {
-		t.Fatalf("validateYamlFile() returned unexpected error for blank yaml filepath. Got %s. Expected %s", err.Error(), expectedErr)
+		t.Fatalf("validateYamlFile() returned unexpected error for blank yaml filepath. Got '%s'. Expected '%s'.", err.Error(), expectedErr)
 	}
 }
 
@@ -105,9 +104,9 @@ func TestValidateYamlFileFlagValue(t *testing.T) {
 	initer.yamlFilepath = "-t"
 	err := initer.validateYamlFile()
 
-	expectedErr := "missing filepath value"
+	expectedErr := "invalid yaml filepath value -t"
 	if err.Error() != expectedErr {
-		t.Fatalf("validateYamlFile() returned unexpected error for flag yaml filepath value. Got %s. Expected %s", err.Error(), expectedErr)
+		t.Fatalf("validateYamlFile() returned unexpected error for flag yaml filepath value. Got '%s'. Expected '%s'.", err.Error(), expectedErr)
 	}
 }
 
@@ -116,9 +115,9 @@ func TestValidateYamlFileWrongExtension(t *testing.T) {
 	initer.yamlFilepath = "wibble.js"
 	err := initer.validateYamlFile()
 
-	expectedErr := "invalid filepath 'wibble.js'. Must be either *.yaml or *.yml"
+	expectedErr := "initialiser got invalid yaml file | invalid filepath 'wibble.js'. Must be either *.yaml or *.yml"
 	if err.Error() != expectedErr {
-		t.Fatalf("validateYamlFile() returned unexpected error for non-yaml filepath value. Got %s. Expected %s", err.Error(), expectedErr)
+		t.Fatalf("validateYamlFile() returned unexpected error for non-yaml filepath value. Got '%s'. Expected '%s'.", err.Error(), expectedErr)
 	}
 }
 
@@ -127,9 +126,9 @@ func TestValidateYamlFileNoFile(t *testing.T) {
 	initer.yamlFilepath = "missing.yaml"
 	err := initer.validateYamlFile()
 
-	expectedErr := fmt.Sprintf("stat %s: no such file or directory", initer.yamlFilepath)
+	expectedErr := "yaml file does not exist | stat missing.yaml: no such file or directory"
 	if err.Error() != expectedErr {
-		t.Fatalf("validateYamlFile() returned unexpected error for missing file. Got %s. Expected %s", err.Error(), expectedErr)
+		t.Fatalf("validateYamlFile() returned unexpected error for missing file. Got '%s'. Expected '%s'.", err.Error(), expectedErr)
 	}
 }
 
