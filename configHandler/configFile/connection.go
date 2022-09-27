@@ -7,15 +7,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-type connType string
-
-const (
-	CLUSTER  connType = "cluster"
-	MINIKUBE connType = "minikube"
-)
-
 type connStruct struct {
-	Type       connType
 	Kubeconfig string
 }
 

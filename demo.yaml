@@ -1,3 +1,2 @@
 connection:
-  type: minikube
   kubeconfig: /Users/admin/.kube/config
