@@ -1,7 +1,7 @@
 package main
 
 import (
-	"k-bench/configHandler"
+	"k-bench/config"
 	"k-bench/initialiser"
 
 	log "github.com/sirupsen/logrus"
@@ -16,9 +16,9 @@ func main() {
 	}
 	log.Info("initialised k-bench")
 
-	config, err := configHandler.Get(initer.GetYamlFilepath())
+	config, err := config.ReadConfigFile(initer.GetYamlFilepath())
 	if err != nil {
-		log.WithField("error", err).Fatal("failed to read config file")
+		log.WithField("error", err).Fatal("failed to read and parse config file")
 	}
 	log.Info("parsed config file")
 
