@@ -11,18 +11,15 @@ import (
 // This exists to reduce having to rewrite this all over the place.
 func Error(cleanErr string, errors ...error) error {
 	if len(errors) == 0 && cleanErr == "" {
-		log.Warn("Error() function recieved blank error and cleanErr values")
+		log.Warn("Error() function recieved blank  cleanErr value and no errors")
 		return nil
 	} else if len(errors) == 0 {
-		log.Error(cleanErr)
 		return fmt.Errorf(cleanErr)
 	} else if cleanErr == "" {
 		err := concatErrors(errors)
-		log.Error(err)
 		return err
 	} else {
 		err := concatErrors(errors)
-		log.WithField("error", err).Error(cleanErr)
 		return fmt.Errorf("%s | %s", cleanErr, err)
 	}
 }

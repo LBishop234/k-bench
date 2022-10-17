@@ -1,11 +1,11 @@
 # Cluster connection details
 connection:
   # path to a .kube/config file targeting the desired cluster
-  kubeconfig: /Users/admin/.kube/config
+  kubeconfig: /Users/user/.kube/config
 deploy:
   # kubernetes yaml manifests to deploy to the cluster
   manifests:
-    # path to file or directory
+    # full path to file or directory
     - path: wibble
       namespace: default
       cleanup: true

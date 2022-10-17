@@ -6,10 +6,10 @@ import (
 	"testing"
 )
 
-func TestReadConfigFile(t *testing.T) {
+func TestReadConfig(t *testing.T) {
 	path := "./test-resources/test.yaml"
 
-	aFile, err := ReadConfigFile(path)
+	aFile, err := ReadConfig(path)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -47,17 +47,17 @@ func TestReadConfigFile(t *testing.T) {
 }
 
 func TestReadConfigFileBadFilepath(t *testing.T) {
-	_, err := ReadConfigFile("./test-resources/missing.yaml")
+	_, err := ReadConfig("./test-resources/missing.yaml")
 	xpctdErr := errHandler.Error("error reading config file", fmt.Errorf("open ./test-resources/missing.yaml: no such file or directory"))
 	if err.Error() != xpctdErr.Error() {
-		t.Fatalf("unexpected error from ReadConfigFile() with bad filepath. Got '%v'. Expected '%v'.", err, xpctdErr)
+		t.Fatalf("unexpected error from ReadConfig() with bad filepath. Got '%v'. Expected '%v'.", err, xpctdErr)
 	}
 }
 
 func TestReadConfigFileBadFileType(t *testing.T) {
-	_, err := ReadConfigFile("./test-resources/test.json")
+	_, err := ReadConfig("./test-resources/test.json")
 	xpctdErr := errHandler.Error("invlid file extension, config fle must be a yaml file")
 	if err.Error() != xpctdErr.Error() {
-		t.Fatalf("unexpected error from ReadConfigFile() with bad file type. Got '%v'. Expected '%v'.", err, xpctdErr)
+		t.Fatalf("unexpected error from ReadConfig() with bad file type. Got '%v'. Expected '%v'.", err, xpctdErr)
 	}
 }
