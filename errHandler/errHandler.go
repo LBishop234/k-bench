@@ -14,13 +14,17 @@ func Error(cleanErr string, errors ...error) error {
 		log.Warn("Error() function recieved blank  cleanErr value and no errors")
 		return nil
 	} else if len(errors) == 0 {
-		return fmt.Errorf(cleanErr)
+		err := fmt.Errorf(cleanErr)
+		log.Error(err)
+		return err
 	} else if cleanErr == "" {
 		err := concatErrors(errors)
+		log.Error(err)
 		return err
 	} else {
-		err := concatErrors(errors)
-		return fmt.Errorf("%s | %s", cleanErr, err)
+		err := fmt.Errorf("%s | %s", cleanErr, concatErrors(errors))
+		log.Error(err)
+		return err
 	}
 }
 

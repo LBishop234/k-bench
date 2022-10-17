@@ -32,7 +32,7 @@ func DeployManifests(path, namespace string) error {
 	for i := 0; i < len(filePaths); i++ {
 		err = applyManifest(filePaths[i], namespace)
 		if err != nil {
-			return errhandler.Error("failed to apply manifest to cluster")
+			return errhandler.Error("failed to apply all manifests to cluster", err)
 		}
 	}
 	return nil
@@ -50,11 +50,15 @@ func RemoveManfiests(path, namespace string) error {
 		return errhandler.Error("failed to handle manifest file(s)", err)
 	}
 
+	var errArray []error
 	for i := 0; i < len(filePaths); i++ {
 		err = removeManifest(filePaths[i], namespace)
 		if err != nil {
-			return errhandler.Error("failed to remove manifest from cluster")
+			errArray = append(errArray, err)
 		}
+	}
+	if len(errArray) > 0 {
+		return errhandler.Error("failed to remove all manifests from cluster", errArray...)
 	}
 	return nil
 }
@@ -91,15 +95,9 @@ func findManifests(path string) (filepaths []string, err error) {
 
 // Applys a manifest file to the cluster.
 func applyManifest(filepath string, namespace string) error {
-	file, err := os.ReadFile(filepath)
+	manifest, err := readManifestFile(filepath)
 	if err != nil {
-		return errhandler.Error("error opening manifest file", err)
-	}
-
-	var manifest unstructured.Unstructured
-	err = yaml.Unmarshal(file, &manifest.Object)
-	if err != nil {
-		return errhandler.Error("error unmarshalling manifest yaml", err)
+		return err
 	}
 
 	aConfig := config.Get()
@@ -112,15 +110,9 @@ func applyManifest(filepath string, namespace string) error {
 		return errhandler.Error("error creating dynamic client connection", err)
 	}
 
-	var manifestType schema.GroupVersionResource
-	switch manifest.GetKind() {
-	case "Deployment":
-		manifestType = schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "deployments"}
-	case "Service":
-		manifestType = schema.GroupVersionResource{Group: "core", Version: "v1", Resource: "services"}
-	}
+	resourceType := getManifestType(manifest)
 
-	result, err := k8sClient.Resource(manifestType).Namespace(namespace).Create(context.TODO(), &manifest, metav1.CreateOptions{})
+	result, err := k8sClient.Resource(resourceType).Namespace(namespace).Create(context.TODO(), &manifest, metav1.CreateOptions{})
 	if err != nil {
 		return errhandler.Error("error applying manifest", err)
 	}
@@ -131,5 +123,54 @@ func applyManifest(filepath string, namespace string) error {
 
 // Removes a manifest file from the cluster.
 func removeManifest(filepath string, namespace string) error {
+	manifest, err := readManifestFile(filepath)
+	if err != nil {
+		return err
+	}
+
+	aConfig := config.Get()
+	k8sConfig, err := aConfig.Connection.NewK8sConfig()
+	if err != nil {
+		return errhandler.Error("", err)
+	}
+	k8sClient, err := dynamic.NewForConfig(k8sConfig)
+	if err != nil {
+		return errhandler.Error("error creating dynamic client connection", err)
+	}
+
+	resourceType := getManifestType(manifest)
+
+	err = k8sClient.Resource(resourceType).Namespace(namespace).Delete(context.TODO(), manifest.GetName(), metav1.DeleteOptions{})
+	if err != nil {
+		return errhandler.Error("error applying manifest", err)
+	}
+
+	log.Debugf("Removed %s from cluster", manifest.GetName())
 	return nil
+}
+
+// Reads a manifest from file.
+func readManifestFile(filepath string) (manifest unstructured.Unstructured, err error) {
+	file, err := os.ReadFile(filepath)
+	if err != nil {
+		return unstructured.Unstructured{}, errhandler.Error("error opening manifest file", err)
+	}
+
+	err = yaml.Unmarshal(file, &manifest.Object)
+	if err != nil {
+		return unstructured.Unstructured{}, errhandler.Error("error unmarshalling manifest yaml", err)
+	}
+
+	return manifest, nil
+}
+
+func getManifestType(manifest unstructured.Unstructured) (resourceType schema.GroupVersionResource) {
+	switch manifest.GetKind() {
+	case "Deployment":
+		resourceType = schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "deployments"}
+	case "Service":
+		resourceType = schema.GroupVersionResource{Group: "", Version: "v1", Resource: "services"}
+	}
+
+	return resourceType
 }

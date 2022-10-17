@@ -71,7 +71,6 @@ func (i *Initialiser) initLogrus() error {
 	}
 
 	if i.debugMode {
-		log.SetReportCaller(true)
 		log.SetLevel(log.DebugLevel)
 	}
 
