@@ -1,0 +1,10 @@
+connection:
+  kubeconfig: /Users/admin/.kube/config
+deploy:
+  manifests:
+    - path: /test/wibble.yaml
+      namespace: default
+      cleanup: true
+    - path: /test/dir/
+      namespace: testing
+      cleanup: false
