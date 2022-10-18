@@ -28,7 +28,7 @@ func Error(cleanErr string, errors ...error) error {
 	}
 }
 
-// Combines an array or errors into a single error
+// Combines an array of errors into a single error
 func concatErrors(errs []error) error {
 	if len(errs) == 0 {
 		return nil

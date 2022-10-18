@@ -164,6 +164,7 @@ func readManifestFile(filepath string) (manifest unstructured.Unstructured, err 
 	return manifest, nil
 }
 
+// Get the manifest type from the dynamic structure. Return the relevant schema for the manifest type.
 func getManifestType(manifest unstructured.Unstructured) (resourceType schema.GroupVersionResource) {
 	switch manifest.GetKind() {
 	case "Deployment":
